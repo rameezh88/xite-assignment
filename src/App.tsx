@@ -15,6 +15,7 @@ import {
   useColorScheme
 } from 'react-native';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { VideoFeedContextProvider } from './contexts/VideoFeedContextProvider';
 import RootNavigator from './navigation/RootNavigator';
 
 const client = new QueryClient();
@@ -26,9 +27,11 @@ const App = () => {
     <QueryClientProvider client={client}>
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
+        <VideoFeedContextProvider>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </VideoFeedContextProvider>
       </SafeAreaView>
     </QueryClientProvider>
   );
