@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   errorContent: {
-    color: 'black',
+    color: 'grey',
     padding: 30,
     textAlign: 'center',
     alignSelf: 'center'
