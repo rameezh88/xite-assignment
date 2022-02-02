@@ -8,6 +8,7 @@ interface Video {
   artist: string;
   title: string;
   release_year: number;
+  image_url: string;
   genre_id: number;
 }
 
