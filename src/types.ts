@@ -1,9 +1,9 @@
-interface Genre {
+export interface Genre {
   id: number;
   name: string;
 }
 
-interface Video {
+export interface Video {
   id: number;
   artist: string;
   title: string;
@@ -12,7 +12,7 @@ interface Video {
   genre_id: number;
 }
 
-interface FeedResponse {
+export interface FeedResponse {
   genres: Genre[];
   videos: Video[];
 }

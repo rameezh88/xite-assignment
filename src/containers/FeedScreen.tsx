@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useQuery } from 'react-query';
+import { FeedResponse, Video } from 'src/types';
 import FeedVideoItem from '../components/FeedVideoItem';
 import XiteService from '../services/XiteService';
 

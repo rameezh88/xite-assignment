@@ -1,5 +1,6 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import { Video } from 'src/types';
 import { Colors } from '../styles/colors';
 
 export interface FeedListItemProps {
