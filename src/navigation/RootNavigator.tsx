@@ -3,9 +3,9 @@ import React from 'react';
 import FeedScreen from '../containers/FeedScreen';
 import SearchScreen from '../containers/SearchScreen';
 
-const Stack = createStackNavigator();
-
 const headerTintColor = '#000';
+
+const Stack = createStackNavigator();
 
 const RootNavigator = () => {
   return (

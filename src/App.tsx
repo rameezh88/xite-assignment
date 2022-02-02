@@ -14,18 +14,23 @@ import {
   StyleSheet,
   useColorScheme
 } from 'react-native';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import RootNavigator from './navigation/RootNavigator';
+
+const client = new QueryClient();
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </SafeAreaView>
+    <QueryClientProvider client={client}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </SafeAreaView>
+    </QueryClientProvider>
   );
 };
 
