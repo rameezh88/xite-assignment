@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import XiteService from '../services/XiteService';
 
 const FeedScreen = () => {
-  const { data, isLoading, error, refetch } = useQuery(
+  const { data, isLoading, error, refetch } = useQuery<FeedResponse>(
     'feedInfo',
     XiteService.getFeed
   );
