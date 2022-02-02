@@ -21,7 +21,11 @@ const SearchScreen = ({ navigation }: Props) => {
             placeholderTextColor={Colors.metaGrey}
             placeholder="Search by title or artist"
           />
-          <TouchableOpacity style={styles.searchClearButton}>
+          <TouchableOpacity
+            style={styles.searchClearButton}
+            onPress={() => {
+              searchInputRef.current?.clear();
+            }}>
             <Cross size={30} fill="#000" />
           </TouchableOpacity>
         </View>
