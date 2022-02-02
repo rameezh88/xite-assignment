@@ -22,6 +22,9 @@ const FeedVideoItem = (props: FeedListItemProps) => {
         <Text style={styles.title}>{video.title}</Text>
         <Text style={styles.artist}>{video.artist}</Text>
         <View style={styles.metaInfoContainer}>
+          {video.genre_name && (
+            <Text style={styles.metaInfoText}>{video.genre_name}</Text>
+          )}
           <Text style={styles.metaInfoText}>{video.release_year}</Text>
         </View>
       </View>
@@ -59,6 +62,7 @@ const styles = StyleSheet.create({
   metaInfoText: {
     fontSize: 11,
     marginTop: 6,
+    marginRight: 5,
     paddingHorizontal: 5,
     color: Colors.metaGrey,
     borderColor: Colors.metaGrey,

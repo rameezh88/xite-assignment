@@ -10,6 +10,7 @@ export interface Video {
   release_year: number;
   image_url: string;
   genre_id: number;
+  genre_name?: string;
 }
 
 export interface FeedResponse {
