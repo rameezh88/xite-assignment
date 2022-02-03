@@ -49,8 +49,6 @@ const SearchScreen = ({ navigation }: Props) => {
     });
   }, [navigation]);
 
-  console.log('Search results', searchResults);
-
   const renderListItem = ({ item }: { item: Video }) => (
     <FeedVideoItem video={item} />
   );
