@@ -62,7 +62,9 @@ export const VideoFeedContextProvider = (props: any) => {
     console.log('Should update genre filter criteria', filterCriteria.genres);
     const newGenres = filterCriteria?.genres;
     if (selected) {
-      newGenres?.push(criterion);
+      if (newGenres.findIndex(genre => genre.id === criterion.id) < 0) {
+        newGenres?.push(criterion);
+      }
     } else {
       if (newGenres?.length === 1) {
         newGenres.pop();
