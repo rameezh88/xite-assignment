@@ -10,6 +10,7 @@ export interface SearchFieldProps {
 }
 
 const SearchField = (props: SearchFieldProps) => {
+  const { onClearText } = props;
   const searchInputRef = useRef<TextInput | null>(null);
   return (
     <View style={styles.searchContainer}>
@@ -24,6 +25,9 @@ const SearchField = (props: SearchFieldProps) => {
         style={styles.searchClearButton}
         onPress={() => {
           searchInputRef.current?.clear();
+          if (onClearText) {
+            onClearText();
+          }
         }}>
         <CrossIcon size={30} fill="#000" />
       </TouchableOpacity>
