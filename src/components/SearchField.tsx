@@ -6,19 +6,19 @@ import { Colors } from '../styles/colors';
 
 export interface SearchFieldProps {
   onChangeText: (text: string) => void;
+  onClearText?: () => void;
 }
 
 const SearchField = (props: SearchFieldProps) => {
-  const { onChangeText } = props;
   const searchInputRef = useRef<TextInput | null>(null);
   return (
     <View style={styles.searchContainer}>
       <TextInput
+        {...props}
         ref={searchInputRef}
         style={styles.searchField}
         placeholderTextColor={Colors.metaGrey}
         placeholder="Search by title or artist"
-        onChangeText={onChangeText}
       />
       <TouchableOpacity
         style={styles.searchClearButton}
