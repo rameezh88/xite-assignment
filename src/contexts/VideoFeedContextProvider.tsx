@@ -9,6 +9,7 @@ type VideoFeedContextType = {
   isFeedLoading: boolean;
   feedLoadingError: unknown;
   refetchFeedInfo: () => void;
+  setGenres: (genres: Genre[]) => void;
 };
 
 const VideoFeedContext = createContext({} as VideoFeedContextType);
@@ -26,7 +27,16 @@ export const VideoFeedContextProvider = (props: any) => {
 
   useEffect(() => {
     if (data) {
-      setGenres(data.genres);
+      setGenres(
+        data.genres?.map(genre => {
+          return {
+            ...genre,
+            key: `${genre.id}`,
+            selected: false
+          };
+        })
+      );
+
       const videosWithGenre = data.videos.map(video => {
         const videoGenre = data.genres.find(
           genre => genre.id === video.genre_id
@@ -43,6 +53,7 @@ export const VideoFeedContextProvider = (props: any) => {
       value={{
         videos,
         genres,
+        setGenres,
         isFeedLoading: isLoading,
         feedLoadingError: error,
         refetchFeedInfo: refetch
