@@ -23,7 +23,6 @@ const Header = ({ text }: HeaderProps) => (
 const FilterScreen = ({ navigation }: Props) => {
   const { genres, setGenres, updateGenreFilterCriterion, clearFilters } =
     useVideoFeedContext();
-  // const [year, setYear] = useState<string | null>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -66,7 +65,6 @@ const FilterScreen = ({ navigation }: Props) => {
       <ScrollView>
         <Header text={'Genre'} />
         {genres?.map(renderGenreItem)}
-        <Header text={'Year'} />
       </ScrollView>
     </View>
   );
