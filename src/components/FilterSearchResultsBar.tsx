@@ -5,25 +5,27 @@ import { Colors } from '../styles/colors';
 
 export interface FilterSearchResultsBarProps {
   searchResultsCount: number;
+  filterCount: number;
   onFilterPressed: () => void;
 }
 
 const FilterSearchResultsBar = ({
   searchResultsCount,
+  filterCount,
   onFilterPressed
-}: FilterSearchResultsBarProps) => {
-  return (
-    <View style={styles.container}>
-      <Text
-        style={
-          styles.searchResultsText
-        }>{`Search Results: ${searchResultsCount}`}</Text>
-      <TouchableOpacity style={styles.filterButton} onPress={onFilterPressed}>
-        <Text style={styles.filterText}>{'Filter'}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+}: FilterSearchResultsBarProps) => (
+  <View style={styles.container}>
+    <Text
+      style={
+        styles.searchResultsText
+      }>{`Search Results: ${searchResultsCount}`}</Text>
+    <TouchableOpacity style={styles.filterButton} onPress={onFilterPressed}>
+      <Text style={styles.filterText}>
+        {`Filter${filterCount > 0 ? `: ${filterCount}` : ''}`}
+      </Text>
+    </TouchableOpacity>
+  </View>
+);
 
 const fontStyle = {
   color: 'white',

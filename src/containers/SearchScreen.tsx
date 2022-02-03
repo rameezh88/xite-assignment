@@ -12,7 +12,7 @@ import { Video } from '../types';
 type Props = NativeStackScreenProps<RootStackParamsList, 'Search'>;
 
 const SearchScreen = ({ navigation }: Props) => {
-  const { videos } = useVideoFeedContext();
+  const { videos, filterCount } = useVideoFeedContext();
   const [searchString, setSearchString] = useState<string | null>('');
 
   const searchResults: Video[] | undefined = useMemo(() => {
@@ -58,6 +58,7 @@ const SearchScreen = ({ navigation }: Props) => {
       <FilterSearchResultsBar
         searchResultsCount={searchResults?.length || 0}
         onFilterPressed={() => navigation.navigate('Filter')}
+        filterCount={filterCount}
       />
       {searchResults && searchString !== null && searchString.length > 0 && (
         <FlatList

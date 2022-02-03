@@ -13,6 +13,7 @@ type VideoFeedContextType = {
   filterCriteria: FilterCriteria | null;
   updateGenreFilterCriterion: (criterion: Genre, selected: boolean) => void;
   addYearFilterCriterion: (criterion: number) => void;
+  filterCount: number;
 };
 
 const VideoFeedContext = createContext({} as VideoFeedContextType);
@@ -22,6 +23,7 @@ export const useVideoFeedContext = () => useContext(VideoFeedContext);
 export const VideoFeedContextProvider = (props: any) => {
   const [videos, setVideos] = useState<Video[] | null>(null);
   const [genres, setGenres] = useState<Genre[] | null>(null);
+  const [filterCount, setFilterCount] = useState<number>(0);
   const [filterCriteria, setFilterCriteria] = useState<FilterCriteria | null>(
     null
   );
@@ -55,7 +57,17 @@ export const VideoFeedContextProvider = (props: any) => {
   }, [data]);
 
   useEffect(() => {
+    let count = 0;
+    if (filterCriteria?.genres) {
+      count = filterCriteria.genres.length;
+    }
+
+    if (filterCriteria?.year && filterCriteria.year > 0) {
+      count++;
+    }
     console.log('Updated filter criteria', filterCriteria);
+    console.log('Filter count', count);
+    setFilterCount(count);
   }, [filterCriteria]);
 
   const updateGenreFilterCriterion = (criterion: Genre, selected: boolean) => {
@@ -92,7 +104,8 @@ export const VideoFeedContextProvider = (props: any) => {
         refetchFeedInfo: refetch,
         filterCriteria,
         updateGenreFilterCriterion,
-        addYearFilterCriterion
+        addYearFilterCriterion,
+        filterCount
       }}>
       {props.children}
     </VideoFeedContext.Provider>
