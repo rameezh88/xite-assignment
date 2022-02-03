@@ -18,7 +18,7 @@ yarn android
 
 ### Corners cut:
 
-- I've skipped the filtering of the videos based on year.
+- I've skipped the filtering of the videos based on year because I was exceeding the time limit for the assignment.
 
 ### Improvements:
 
