@@ -21,7 +21,8 @@ const Header = ({ text }: HeaderProps) => (
 );
 
 const FilterScreen = ({ navigation }: Props) => {
-  const { genres, setGenres } = useVideoFeedContext();
+  const { genres, setGenres, updateGenreFilterCriterion } =
+    useVideoFeedContext();
   // const [year, setYear] = useState<string | null>(null);
 
   const handleGenreItemSelected = (item: Genre, selected: boolean) => {
@@ -31,6 +32,7 @@ const FilterScreen = ({ navigation }: Props) => {
     if (indexOfItem && indexOfItem > 0) {
       newGenreItems[indexOfItem] = item;
       setGenres(newGenreItems);
+      updateGenreFilterCriterion(item, selected);
     }
   };
 

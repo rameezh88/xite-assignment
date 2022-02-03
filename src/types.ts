@@ -19,3 +19,8 @@ export interface FeedResponse {
   genres: Genre[];
   videos: Video[];
 }
+
+export interface FilterCriteria {
+  genres: Genre[];
+  year: number;
+}

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import XiteService from '../services/XiteService';
-import { FeedResponse, Genre, Video } from '../types';
+import { FeedResponse, FilterCriteria, Genre, Video } from '../types';
 
 type VideoFeedContextType = {
   videos: Video[] | null;
@@ -10,6 +10,9 @@ type VideoFeedContextType = {
   feedLoadingError: unknown;
   refetchFeedInfo: () => void;
   setGenres: (genres: Genre[]) => void;
+  filterCriteria: FilterCriteria | null;
+  updateGenreFilterCriterion: (criterion: Genre, selected: boolean) => void;
+  addYearFilterCriterion: (criterion: number) => void;
 };
 
 const VideoFeedContext = createContext({} as VideoFeedContextType);
@@ -19,6 +22,9 @@ export const useVideoFeedContext = () => useContext(VideoFeedContext);
 export const VideoFeedContextProvider = (props: any) => {
   const [videos, setVideos] = useState<Video[] | null>(null);
   const [genres, setGenres] = useState<Genre[] | null>(null);
+  const [filterCriteria, setFilterCriteria] = useState<FilterCriteria | null>(
+    null
+  );
 
   const { data, isLoading, error, refetch } = useQuery<FeedResponse>(
     'feedInfo',
@@ -48,6 +54,33 @@ export const VideoFeedContextProvider = (props: any) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    console.log('Updated filter criteria', filterCriteria);
+  }, [filterCriteria]);
+
+  const updateGenreFilterCriterion = (criterion: Genre, selected: boolean) => {
+    const newGenres = filterCriteria?.genres;
+    if (selected) {
+      newGenres?.push(criterion);
+    } else {
+      const indexOfGenre = newGenres?.findIndex(g => g.id === criterion.id);
+      if (indexOfGenre) {
+        newGenres?.splice(indexOfGenre, 1);
+      }
+    }
+    setFilterCriteria({
+      genres: Array.from(newGenres || []),
+      year: filterCriteria?.year || 0
+    });
+  };
+
+  const addYearFilterCriterion = (criterion: number) => {
+    setFilterCriteria({
+      genres: filterCriteria?.genres || [],
+      year: criterion
+    });
+  };
+
   return (
     <VideoFeedContext.Provider
       value={{
@@ -56,7 +89,10 @@ export const VideoFeedContextProvider = (props: any) => {
         setGenres,
         isFeedLoading: isLoading,
         feedLoadingError: error,
-        refetchFeedInfo: refetch
+        refetchFeedInfo: refetch,
+        filterCriteria,
+        updateGenreFilterCriterion,
+        addYearFilterCriterion
       }}>
       {props.children}
     </VideoFeedContext.Provider>
