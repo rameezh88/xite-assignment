@@ -59,9 +59,7 @@ const SearchScreen = ({ navigation }: Props) => {
     <View>
       <FilterSearchResultsBar
         searchResultsCount={searchResults?.length || 0}
-        onFilterPressed={() => {
-          console.log('Open filter page');
-        }}
+        onFilterPressed={() => navigation.navigate('Filter')}
       />
       {searchResults && searchString !== null && searchString.length > 0 && (
         <FlatList
