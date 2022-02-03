@@ -38,27 +38,25 @@ const FilterScreen = ({ navigation }: Props) => {
     item.selected = selected;
     const indexOfItem = genres?.findIndex((g: Genre) => g.id === item.id);
     const newGenreItems = Array.from(genres || []);
-    if (indexOfItem && indexOfItem > 0) {
+    if (indexOfItem !== undefined && indexOfItem >= 0) {
       newGenreItems[indexOfItem] = item;
       setGenres(newGenreItems);
       updateGenreFilterCriterion(item, selected);
     }
   };
 
-  const renderGenreItem = (genre: Genre) => {
-    return (
-      <Pressable
-        style={styles.genreItemContainer}
-        key={genre.id}
-        onPress={() => handleGenreItemSelected(genre, !genre.selected)}>
-        <CheckBox
-          value={genre.selected}
-          onValueChange={value => handleGenreItemSelected(genre, value)}
-        />
-        <Text style={styles.genreItemName}>{genre.name}</Text>
-      </Pressable>
-    );
-  };
+  const renderGenreItem = (genre: Genre) => (
+    <Pressable
+      style={styles.genreItemContainer}
+      key={genre.id}
+      onPress={() => handleGenreItemSelected(genre, !genre.selected)}>
+      <CheckBox
+        value={genre.selected}
+        onValueChange={value => handleGenreItemSelected(genre, value)}
+      />
+      <Text style={styles.genreItemName}>{genre.name}</Text>
+    </Pressable>
+  );
 
   return (
     <View>
