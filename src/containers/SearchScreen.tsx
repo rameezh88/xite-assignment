@@ -16,14 +16,16 @@ const SearchScreen = ({ navigation }: Props) => {
 
   const searchResults: Video[] | undefined = useMemo(() => {
     if (searchString == '' || !searchString) {
-      console.log('Search string is empty. Returning empty array');
       return [];
     }
     return videos?.filter(video => {
-      console.log('Should filter video with search string', searchString);
+      const searchStrRegex = new RegExp(
+        '\\b' + searchString.toLowerCase(),
+        'gi'
+      );
       return (
-        `${video.title}`.toLowerCase().includes(searchString.toLowerCase()) ||
-        `${video.artist}`.toLowerCase().includes(searchString.toLowerCase())
+        `${video.title}`.toLowerCase().match(searchStrRegex) ||
+        `${video.artist}`.toLowerCase().match(searchStrRegex)
       );
     });
   }, [searchString]);
