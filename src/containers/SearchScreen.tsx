@@ -1,6 +1,11 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import debounce from 'lodash.debounce';
-import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState
+} from 'react';
 import { FlatList, View } from 'react-native';
 import FeedVideoItem from '../components/FeedVideoItem';
 import FilterSearchResultsBar from '../components/FilterSearchResultsBar';
@@ -12,28 +17,42 @@ import { Video } from '../types';
 type Props = NativeStackScreenProps<RootStackParamsList, 'Search'>;
 
 const SearchScreen = ({ navigation }: Props) => {
-  const { videos, filterCount } = useVideoFeedContext();
-  const [searchString, setSearchString] = useState<string | null>('');
+  const { videos, filterCount, filterCriteria } = useVideoFeedContext();
+  const [searchResults, setSearchResults] = useState<Video[] | null>([]);
 
-  const searchResults: Video[] | undefined = useMemo(() => {
-    if (searchString == '' || !searchString) {
-      return [];
-    }
-    return videos?.filter(video => {
-      const searchStrRegex = new RegExp(
-        '\\b' + searchString.toLowerCase(),
-        'gi'
-      );
-      return (
-        `${video.title}`.toLowerCase().match(searchStrRegex) ||
-        `${video.artist}`.toLowerCase().match(searchStrRegex)
-      );
+  useEffect(() => {
+    const videoList =
+      searchResults && searchResults?.length > 0 ? searchResults : videos;
+    const videosFromGenreFilter = videoList?.filter(video => {
+      if (filterCriteria?.genres.some(genre => genre.id === video.genre_id)) {
+        return video;
+      }
     });
-  }, [searchString]);
+    console.log('Got videos from Genre filter', videosFromGenreFilter);
+    setSearchResults(videosFromGenreFilter || []);
+  }, [filterCriteria]);
 
   const debouncedChangeTextHandler = useCallback(
-    debounce((text: string) => setSearchString(text), 300),
-    []
+    debounce((text: string) => {
+      let results: Video[] | undefined | null = [];
+      const videoList =
+        searchResults && searchResults?.length > 0 ? searchResults : videos;
+      if (text.length > 0) {
+        results = videoList?.filter(video => {
+          const searchStrRegex = new RegExp('\\b' + text?.toLowerCase(), 'gi');
+          return (
+            `${video.title}`.toLowerCase().match(searchStrRegex) ||
+            `${video.artist}`.toLowerCase().match(searchStrRegex)
+          );
+        });
+        console.log('Search text results', results);
+      } else {
+        results = videoList;
+      }
+
+      setSearchResults(results || []);
+    }, 300),
+    [searchResults]
   );
 
   useLayoutEffect(() => {
@@ -41,7 +60,7 @@ const SearchScreen = ({ navigation }: Props) => {
       headerTitle: () => (
         <SearchField
           onClearText={() => {
-            setSearchString('');
+            setSearchResults([]);
           }}
           onChangeText={debouncedChangeTextHandler}
         />
@@ -60,14 +79,13 @@ const SearchScreen = ({ navigation }: Props) => {
         onFilterPressed={() => navigation.navigate('Filter')}
         filterCount={filterCount}
       />
-      {searchResults && searchString !== null && searchString.length > 0 && (
-        <FlatList
-          data={searchResults}
-          renderItem={renderListItem}
-          keyExtractor={(item: Video) => `${item.id}`}
-          maxToRenderPerBatch={5}
-        />
-      )}
+      <FlatList
+        style={{ paddingBottom: 40 }}
+        data={searchResults}
+        renderItem={renderListItem}
+        keyExtractor={(item: Video) => `${item.id}`}
+        maxToRenderPerBatch={5}
+      />
     </View>
   );
 };

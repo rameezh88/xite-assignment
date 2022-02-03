@@ -13,6 +13,7 @@ type VideoFeedContextType = {
   filterCriteria: FilterCriteria | null;
   updateGenreFilterCriterion: (criterion: Genre, selected: boolean) => void;
   addYearFilterCriterion: (criterion: number) => void;
+  clearFilters: () => void;
   filterCount: number;
 };
 
@@ -20,14 +21,17 @@ const VideoFeedContext = createContext({} as VideoFeedContextType);
 
 export const useVideoFeedContext = () => useContext(VideoFeedContext);
 
+const emptyCriteria: FilterCriteria = {
+  genres: [],
+  year: 0
+};
+
 export const VideoFeedContextProvider = (props: any) => {
   const [videos, setVideos] = useState<Video[] | null>(null);
   const [genres, setGenres] = useState<Genre[] | null>(null);
   const [filterCount, setFilterCount] = useState<number>(0);
-  const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
-    genres: [],
-    year: 0
-  });
+  const [filterCriteria, setFilterCriteria] =
+    useState<FilterCriteria>(emptyCriteria);
 
   const { data, isLoading, error, refetch } = useQuery<FeedResponse>(
     'feedInfo',
@@ -54,34 +58,39 @@ export const VideoFeedContextProvider = (props: any) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    let count = 0;
-    if (filterCriteria?.genres) {
-      count = filterCriteria.genres.length;
-    }
-
-    if (filterCriteria?.year && filterCriteria.year > 0) {
-      count++;
-    }
-    console.log('Updated filter criteria', filterCriteria);
-    console.log('Filter count', count);
-    setFilterCount(count);
-  }, [filterCriteria]);
-
   const updateGenreFilterCriterion = (criterion: Genre, selected: boolean) => {
+    console.log('Should update genre filter criteria', filterCriteria.genres);
     const newGenres = filterCriteria?.genres;
     if (selected) {
       newGenres?.push(criterion);
     } else {
-      const indexOfGenre = newGenres?.findIndex(g => g.id === criterion.id);
-      if (indexOfGenre) {
+      if (newGenres?.length === 1) {
+        newGenres.pop();
+        console.log('Should empty array', newGenres);
+      } else {
+        const indexOfGenre = newGenres?.findIndex(g => g.id === criterion.id);
+        console.log(
+          'Should remove genre item from filter criteria',
+          indexOfGenre,
+          newGenres
+        );
         newGenres?.splice(indexOfGenre, 1);
+        console.log('Removed genre item', newGenres);
       }
     }
+
     setFilterCriteria({
       genres: Array.from(newGenres || []),
       year: filterCriteria?.year || 0
     });
+
+    let count = newGenres.length;
+
+    if (filterCriteria?.year && filterCriteria.year > 0) {
+      console.log('Incrementing filter count');
+      count++;
+    }
+    setFilterCount(count);
   };
 
   const addYearFilterCriterion = (criterion: number) => {
@@ -89,6 +98,18 @@ export const VideoFeedContextProvider = (props: any) => {
       genres: filterCriteria?.genres || [],
       year: criterion
     });
+
+    setFilterCount(oldFilterCount => oldFilterCount++);
+  };
+
+  const clearFilters = () => {
+    const refreshedGenreList = genres?.map(genre => {
+      genre.selected = false;
+      return genre;
+    });
+    setGenres([...(refreshedGenreList || [])]);
+    setFilterCount(0);
+    setFilterCriteria({ ...emptyCriteria });
   };
 
   return (
@@ -103,6 +124,7 @@ export const VideoFeedContextProvider = (props: any) => {
         filterCriteria,
         updateGenreFilterCriterion,
         addYearFilterCriterion,
+        clearFilters,
         filterCount
       }}>
       {props.children}

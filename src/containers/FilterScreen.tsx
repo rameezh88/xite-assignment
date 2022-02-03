@@ -1,8 +1,8 @@
 import CheckBox from '@react-native-community/checkbox';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { useVideoFeedContext } from '../contexts/VideoFeedContextProvider';
 import { RootStackParamsList } from '../navigation/RootNavigator';
 import { Colors } from '../styles/colors';
@@ -21,9 +21,19 @@ const Header = ({ text }: HeaderProps) => (
 );
 
 const FilterScreen = ({ navigation }: Props) => {
-  const { genres, setGenres, updateGenreFilterCriterion } =
+  const { genres, setGenres, updateGenreFilterCriterion, clearFilters } =
     useVideoFeedContext();
   // const [year, setYear] = useState<string | null>(null);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity style={styles.clearButton} onPress={clearFilters}>
+          <Text>{'Clear'}</Text>
+        </TouchableOpacity>
+      )
+    });
+  }, [navigation]);
 
   const handleGenreItemSelected = (item: Genre, selected: boolean) => {
     item.selected = selected;
@@ -77,6 +87,9 @@ const styles = StyleSheet.create({
   },
   headerText: {
     marginLeft: 5
+  },
+  clearButton: {
+    marginRight: 10
   }
 });
 
