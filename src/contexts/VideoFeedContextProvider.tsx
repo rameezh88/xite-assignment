@@ -24,9 +24,10 @@ export const VideoFeedContextProvider = (props: any) => {
   const [videos, setVideos] = useState<Video[] | null>(null);
   const [genres, setGenres] = useState<Genre[] | null>(null);
   const [filterCount, setFilterCount] = useState<number>(0);
-  const [filterCriteria, setFilterCriteria] = useState<FilterCriteria | null>(
-    null
-  );
+  const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
+    genres: [],
+    year: 0
+  });
 
   const { data, isLoading, error, refetch } = useQuery<FeedResponse>(
     'feedInfo',
