@@ -19,39 +19,53 @@ type Props = NativeStackScreenProps<RootStackParamsList, 'Search'>;
 const SearchScreen = ({ navigation }: Props) => {
   const { videos, filterCount, filterCriteria } = useVideoFeedContext();
   const [searchResults, setSearchResults] = useState<Video[] | null>([]);
+  const [searchText, setSearchText] = useState<string | null>('');
 
   useEffect(() => {
-    const videoList =
-      searchResults && searchResults?.length > 0 ? searchResults : videos;
-    const videosFromGenreFilter = videoList?.filter(video => {
-      if (filterCriteria?.genres.some(genre => genre.id === video.genre_id)) {
-        return video;
-      }
-    });
-    console.log('Got videos from Genre filter', videosFromGenreFilter);
-    setSearchResults(videosFromGenreFilter || []);
-  }, [filterCriteria]);
+    let videosFromGenreFilter: Video[] | null | undefined = [];
+
+    if (filterCriteria?.genres.length == 0 && searchText?.length == 0) {
+      setSearchResults([]);
+      return;
+    }
+
+    if (filterCriteria && filterCriteria?.genres.length > 0) {
+      filterCriteria?.genres.forEach(genre => {
+        const videosForGenre = videos?.filter(video => {
+          if (genre.id === video.genre_id) {
+            return video;
+          }
+        });
+
+        videosFromGenreFilter = videosFromGenreFilter?.concat(
+          videosForGenre || []
+        );
+      });
+    } else {
+      videosFromGenreFilter = videos;
+    }
+
+    let results: Video[] | undefined | null = [];
+    if (searchText && searchText.length > 0) {
+      results = videosFromGenreFilter?.filter(video => {
+        const searchStrRegex = new RegExp(
+          '\\b' + searchText?.toLowerCase(),
+          'gi'
+        );
+        return (
+          `${video.title}`.toLowerCase().match(searchStrRegex) ||
+          `${video.artist}`.toLowerCase().match(searchStrRegex)
+        );
+      });
+    } else {
+      results = videosFromGenreFilter;
+    }
+
+    setSearchResults(results || []);
+  }, [filterCriteria, searchText]);
 
   const debouncedChangeTextHandler = useCallback(
-    debounce((text: string) => {
-      let results: Video[] | undefined | null = [];
-      const videoList =
-        searchResults && searchResults?.length > 0 ? searchResults : videos;
-      if (text.length > 0) {
-        results = videoList?.filter(video => {
-          const searchStrRegex = new RegExp('\\b' + text?.toLowerCase(), 'gi');
-          return (
-            `${video.title}`.toLowerCase().match(searchStrRegex) ||
-            `${video.artist}`.toLowerCase().match(searchStrRegex)
-          );
-        });
-        console.log('Search text results', results);
-      } else {
-        results = videoList;
-      }
-
-      setSearchResults(results || []);
-    }, 300),
+    debounce((text: string) => setSearchText(text), 300),
     [searchResults]
   );
 
@@ -60,7 +74,7 @@ const SearchScreen = ({ navigation }: Props) => {
       headerTitle: () => (
         <SearchField
           onClearText={() => {
-            setSearchResults([]);
+            setSearchText('');
           }}
           onChangeText={debouncedChangeTextHandler}
         />
@@ -79,13 +93,15 @@ const SearchScreen = ({ navigation }: Props) => {
         onFilterPressed={() => navigation.navigate('Filter')}
         filterCount={filterCount}
       />
-      <FlatList
-        style={{ paddingBottom: 40 }}
-        data={searchResults}
-        renderItem={renderListItem}
-        keyExtractor={(item: Video) => `${item.id}`}
-        maxToRenderPerBatch={5}
-      />
+      {searchResults && (
+        <FlatList
+          style={{ paddingBottom: 40 }}
+          data={searchResults}
+          renderItem={renderListItem}
+          keyExtractor={(item: Video) => `${item.id}`}
+          maxToRenderPerBatch={5}
+        />
+      )}
     </View>
   );
 };

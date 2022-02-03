@@ -21,17 +21,14 @@ const VideoFeedContext = createContext({} as VideoFeedContextType);
 
 export const useVideoFeedContext = () => useContext(VideoFeedContext);
 
-const emptyCriteria: FilterCriteria = {
-  genres: [],
-  year: 0
-};
-
 export const VideoFeedContextProvider = (props: any) => {
   const [videos, setVideos] = useState<Video[] | null>(null);
   const [genres, setGenres] = useState<Genre[] | null>(null);
   const [filterCount, setFilterCount] = useState<number>(0);
-  const [filterCriteria, setFilterCriteria] =
-    useState<FilterCriteria>(emptyCriteria);
+  const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
+    genres: [],
+    year: 0
+  });
 
   const { data, isLoading, error, refetch } = useQuery<FeedResponse>(
     'feedInfo',
@@ -59,7 +56,6 @@ export const VideoFeedContextProvider = (props: any) => {
   }, [data]);
 
   const updateGenreFilterCriterion = (criterion: Genre, selected: boolean) => {
-    console.log('Should update genre filter criteria', filterCriteria.genres);
     const newGenres = filterCriteria?.genres;
     if (selected) {
       if (newGenres.findIndex(genre => genre.id === criterion.id) < 0) {
@@ -68,16 +64,9 @@ export const VideoFeedContextProvider = (props: any) => {
     } else {
       if (newGenres?.length === 1) {
         newGenres.pop();
-        console.log('Should empty array', newGenres);
       } else {
         const indexOfGenre = newGenres?.findIndex(g => g.id === criterion.id);
-        console.log(
-          'Should remove genre item from filter criteria',
-          indexOfGenre,
-          newGenres
-        );
         newGenres?.splice(indexOfGenre, 1);
-        console.log('Removed genre item', newGenres);
       }
     }
 
@@ -89,7 +78,6 @@ export const VideoFeedContextProvider = (props: any) => {
     let count = newGenres.length;
 
     if (filterCriteria?.year && filterCriteria.year > 0) {
-      console.log('Incrementing filter count');
       count++;
     }
     setFilterCount(count);
@@ -111,7 +99,7 @@ export const VideoFeedContextProvider = (props: any) => {
     });
     setGenres([...(refreshedGenreList || [])]);
     setFilterCount(0);
-    setFilterCriteria({ ...emptyCriteria });
+    setFilterCriteria({ genres: [], year: 0 });
   };
 
   return (
