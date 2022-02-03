@@ -3,6 +3,7 @@ import debounce from 'lodash.debounce';
 import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { FlatList, View } from 'react-native';
 import FeedVideoItem from '../components/FeedVideoItem';
+import FilterSearchResultsBar from '../components/FilterSearchResultsBar';
 import SearchField from '../components/SearchField';
 import { useVideoFeedContext } from '../contexts/VideoFeedContextProvider';
 import { RootStackParamsList } from '../navigation/RootNavigator';
@@ -56,6 +57,12 @@ const SearchScreen = ({ navigation }: Props) => {
 
   return (
     <View>
+      <FilterSearchResultsBar
+        searchResultsCount={searchResults?.length || 0}
+        onFilterPressed={() => {
+          console.log('Open filter page');
+        }}
+      />
       {searchResults && searchString !== null && searchString.length > 0 && (
         <FlatList
           data={searchResults}
