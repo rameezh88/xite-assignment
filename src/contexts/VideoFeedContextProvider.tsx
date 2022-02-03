@@ -37,13 +37,10 @@ export const VideoFeedContextProvider = (props: any) => {
   useEffect(() => {
     if (data) {
       setGenres(
-        data.genres?.map(genre => {
-          return {
-            ...genre,
-            key: `${genre.id}`,
-            selected: false
-          };
-        })
+        data.genres?.map(genre => ({
+          ...genre,
+          selected: false
+        }))
       );
 
       const videosWithGenre = data.videos.map(video => {

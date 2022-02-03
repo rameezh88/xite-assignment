@@ -40,6 +40,7 @@ const FilterScreen = ({ navigation }: Props) => {
     return (
       <Pressable
         style={styles.genreItemContainer}
+        key={genre.id}
         onPress={() => handleGenreItemSelected(genre, !genre.selected)}>
         <CheckBox
           value={genre.selected}
